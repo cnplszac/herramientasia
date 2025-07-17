@@ -10,9 +10,9 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Light gray background */
+            background-color: #f0f2f5; /* Fondo gris claro */
         }
-        /* Custom scrollbar for textareas */
+        /* Barra de desplazamiento personalizada para los textareas */
         textarea::-webkit-scrollbar {
             width: 8px;
         }
@@ -36,7 +36,7 @@
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            display: none; /* Hidden by default */
+            display: none; /* Oculto por defecto */
             font-weight: 600;
         }
         .message-box.success {
@@ -53,7 +53,7 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
 
-    <!-- Message Box -->
+    <!-- Caja de Mensajes -->
     <div id="messageBox" class="message-box"></div>
 
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl md:p-8">
@@ -70,7 +70,7 @@
             </button>
         </div>
 
-        <!-- Loading Indicator -->
+        <!-- Indicador de Carga -->
         <div id="loadingIndicator" class="hidden flex justify-center items-center mb-6">
             <div class="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
             <span class="ml-3 text-blue-600 font-medium">Humanizando...</span>
@@ -87,7 +87,7 @@
     </div>
 
     <script type="module">
-        // Get references to DOM elements
+        // Obtener referencias a los elementos del DOM
         const aiTextInput = document.getElementById('aiTextInput');
         const humanizeButton = document.getElementById('humanizeButton');
         const humanizedOutput = document.getElementById('humanizedOutput');
@@ -95,9 +95,9 @@
         const messageBox = document.getElementById('messageBox');
 
         /**
-         * Displays a message in the message box.
-         * @param {string} message - The message to display.
-         * @param {'success' | 'error'} type - The type of message (e.g., 'success', 'error').
+         * Muestra un mensaje en la caja de mensajes.
+         * @param {string} message - El mensaje a mostrar.
+         * @param {'success' | 'error'} type - El tipo de mensaje (ej. 'success', 'error').
          */
         function showMessage(message, type) {
             messageBox.textContent = message;
@@ -105,10 +105,10 @@
             messageBox.style.display = 'block';
             setTimeout(() => {
                 messageBox.style.display = 'none';
-            }, 3000); // Hide after 3 seconds
+            }, 3000); // Ocultar después de 3 segundos
         }
 
-        // Event listener for the humanize button
+        // Listener de eventos para el botón de humanizar
         humanizeButton.addEventListener('click', async () => {
             const inputText = aiTextInput.value.trim();
 
@@ -117,13 +117,13 @@
                 return;
             }
 
-            // Show loading indicator and disable button
+            // Mostrar indicador de carga y deshabilitar botón
             loadingIndicator.classList.remove('hidden');
             humanizeButton.disabled = true;
-            humanizedOutput.value = ''; // Clear previous output
+            humanizedOutput.value = ''; // Limpiar la salida anterior
 
             try {
-                // Prepare the prompt for the AI model with enhanced instructions for third person and general language
+                // Preparar el prompt para el modelo de IA con instrucciones mejoradas para tercera persona y lenguaje general
                 const prompt = `Reescribe el siguiente texto para que suene **completamente natural, auténtico y escrito por un humano**. Elimina cualquier rastro de que fue generado por una IA.
 
                 **IMPORTANTE: Asegúrate de que el texto resultante esté siempre en tercera persona (él, ella, ellos, ellas, ello).**
@@ -156,19 +156,19 @@
                 //    y, preferiblemente, con tu dominio web para mayor seguridad (restricciones HTTP).
                 // 7. Reemplaza 'TU_CLAVE_API_AQUI' con la clave que obtengas.
                 //
-                // Si encuentras errores de CORS (Cross-Origin Resource Sharing)
+                // Si encuentras errores de CORS (Cross-Origin Resource Sharing - Uso compartido de recursos entre orígenes)
                 // después de desplegar, asegúrate de que tu dominio esté correctamente
                 // configurado en las restricciones HTTP de tu clave API en Google Cloud Console.
                 // -----------------------------------------------------
                 const apiKey = "TU_CLAVE_API_AQUI"; // <-- ¡REEMPLAZA ESTO CON TU CLAVE API REAL!
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-                // Construct the payload for the Gemini API
+                // Construir el payload para la API de Gemini
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
 
-                // Make the fetch call to the Gemini API
+                // Realizar la llamada fetch a la API de Gemini
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -177,7 +177,7 @@
 
                 const result = await response.json();
 
-                // Check for successful response and extract the text
+                // Verificar la respuesta exitosa y extraer el texto
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
@@ -185,8 +185,8 @@
                     humanizedOutput.value = humanizedText;
                     showMessage('Texto humanizado con éxito.', 'success');
                 } else {
-                    // Handle cases where the response structure is unexpected or content is missing
-                    console.error('Unexpected API response structure:', result);
+                    // Manejar casos donde la estructura de la respuesta es inesperada o falta contenido
+                    console.error('Estructura de respuesta de API inesperada:', result);
                     showMessage('Error al humanizar el texto. Inténtalo de nuevo. Revisa la consola para más detalles.', 'error');
                 }
 
@@ -194,7 +194,7 @@
                 console.error('Error al llamar a la API de Gemini:', error);
                 showMessage('Ocurrió un error. Por favor, revisa tu conexión y la configuración de la clave API.', 'error');
             } finally {
-                // Hide loading indicator and enable button
+                // Ocultar indicador de carga y habilitar botón
                 loadingIndicator.classList.add('hidden');
                 humanizeButton.disabled = false;
             }
