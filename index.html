@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Humanizador de Texto IA (Lenguaje General)</title>
+    <title>Humanizador de Texto IA (Solución de Despliegue)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -144,14 +144,29 @@
 
                 Texto humanizado:`;
 
+                // --- INSTRUCCIONES IMPORTANTES PARA EL DESPLIEGUE ---
+                // Cuando despliegues esta página en tu propio sitio web,
+                // necesitarás una clave API válida de Google Cloud Console.
+                // 1. Ve a Google Cloud Console: https://console.cloud.google.com/
+                // 2. Crea un nuevo proyecto o selecciona uno existente.
+                // 3. Habilita la API de Gemini (si no está habilitada).
+                // 4. Ve a "APIs y servicios" > "Credenciales".
+                // 5. Crea una "Clave de API".
+                // 6. Restringe la clave API para que solo funcione con la API de Gemini
+                //    y, preferiblemente, con tu dominio web para mayor seguridad (restricciones HTTP).
+                // 7. Reemplaza 'TU_CLAVE_API_AQUI' con la clave que obtengas.
+                //
+                // Si encuentras errores de CORS (Cross-Origin Resource Sharing)
+                // después de desplegar, asegúrate de que tu dominio esté correctamente
+                // configurado en las restricciones HTTP de tu clave API en Google Cloud Console.
+                // -----------------------------------------------------
+                const apiKey = "TU_CLAVE_API_AQUI"; // <-- ¡REEMPLAZA ESTO CON TU CLAVE API REAL!
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
                 // Construct the payload for the Gemini API
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
-
-                // API key is handled by the Canvas environment, leave it empty
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 // Make the fetch call to the Gemini API
                 const response = await fetch(apiUrl, {
@@ -172,12 +187,12 @@
                 } else {
                     // Handle cases where the response structure is unexpected or content is missing
                     console.error('Unexpected API response structure:', result);
-                    showMessage('Error al humanizar el texto. Inténtalo de nuevo.', 'error');
+                    showMessage('Error al humanizar el texto. Inténtalo de nuevo. Revisa la consola para más detalles.', 'error');
                 }
 
             } catch (error) {
                 console.error('Error al llamar a la API de Gemini:', error);
-                showMessage('Ocurrió un error. Por favor, revisa tu conexión o intenta de nuevo más tarde.', 'error');
+                showMessage('Ocurrió un error. Por favor, revisa tu conexión y la configuración de la clave API.', 'error');
             } finally {
                 // Hide loading indicator and enable button
                 loadingIndicator.classList.add('hidden');
